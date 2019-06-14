@@ -11,9 +11,9 @@ tfSEED = 0
 npSEED = 0
 PATH = os.getcwd()
 gpu_count = 4
-batchSize = 1024*gpu_count
+batchSize = 4096*gpu_count
 tf.set_random_seed(tfSEED)  # Graphないでseed固定
-epoch_num = 10
+epoch_num = 300
 
 (train_X, train_y), (val_X, val_y), (test_X, test_y) = load_mnist_data()
 base_model = make_model((28, 28, 1))

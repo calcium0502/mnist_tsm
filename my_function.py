@@ -53,6 +53,8 @@ def prediction_classification(model, test_X, test_y, plot_num=0, seed=None):
     con_mat = confusion_matrix(predict_y, test_y)
     plt.figure()
     plt.imshow(con_mat, cmap="jet", interpolation="nearest", vmin=0)
+    plt.xlabel("prediction")
+    plt.ylabel("true")
     plt.colorbar()
 
     for i in range(plot_num):
@@ -62,17 +64,7 @@ def prediction_classification(model, test_X, test_y, plot_num=0, seed=None):
         Str = "label :{0} || prediction :{1}".format(y_data, prediction)
         plt.figure()
         plt.title(label=Str)
-        # plt.plot(x_data[0, :], "k-", label="x")
-        # plt.plot(x_data[1, :], "r-", label="y")
-        # plt.plot(x_data[2, :], "b-", label="z")
-        plt.plot(test_X[rnd, :, 0], "k-", label="x")
-        plt.plot(test_X[rnd, :, 1], "r-", label="y")
-        plt.plot(test_X[rnd, :, 2], "b-", label="z")
-        plt.xlabel("Time")
-        plt.ylabel("Accelarate")
-        plt.legend()
-        plt.grid(which="major", color="black", linestyle="-")
-        plt.grid(which="minor", color="black", linestyle="--")
+        plt.imshow(test_X[rnd, :, :, 0], cmap="gray", interpolation="nearest", vmax=1, vmin=0)
     plt.show()
 
 
@@ -108,12 +100,12 @@ def make_model(input_shape):
 
     def Plain(inputs_x, size=8):
         s = size // 2
-        x = Conv1D(size, 5, padding="SAME")(inputs_x)
+        x = Conv2D(size, 5, padding="SAME")(inputs_x)
         x = BatchNormalization()(x)
         x = Activation("relu")(x)
         x = Dropout(0.5)(x)
 
-        x = Conv1D(size, 5, padding="SAME")(x)
+        x = Conv2D(size, 5, padding="SAME")(x)
         x = BatchNormalization()(x)
         x = Activation("relu")(x)
         x = Dropout(0.5)(x)
@@ -163,13 +155,6 @@ def make_model(input_shape):
         x = Dropout(0.5)(x)
         for _ in range(8):
             x = Bottleneck(x, size=16)
-
-        x = Conv2D(32, 5, strides=5, padding="SAME")(x)
-        x = BatchNormalization()(x)
-        x = Activation("relu")(x)
-        x = Dropout(0.5)(x)
-        for _ in range(4):
-            x = Bottleneck(x, size=32)
 
         flat1 = Flatten()(x)
         fc = Dense(32)(flat1)
